@@ -4,20 +4,17 @@ const fs = require('fs'),
 	{ streamArray } = require('stream-json/streamers/StreamArray')
 	Batch = require('stream-json/utils/Batch')
 
-function* makeIterator() {
+async function main() {
 	const pipeline = chain([
 		fs.createReadStream('temp.json'),
 		parser(),
 		streamArray(),
 		new Batch({batchSize: 10}),
 	])
-	let value
-	while (value = pipeline.read())
-		yield value
-}
 
-const iterator = makeIterator()
-for (let chunk of iterator) {
-	console.log('XXX')
-	console.log(chunk)
+	for await (let chunk of pipeline) {
+		console.log('XXX')
+		console.log(chunk)
+	}
 }
+main()
